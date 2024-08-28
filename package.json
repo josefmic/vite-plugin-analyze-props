@@ -1,7 +1,16 @@
 {
-  "name": "lib",
-  "private": true,
-  "version": "0.0.0",
+  "name": "vite-plugin-analyze-props",
+  "private": false,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/vite-plugin-analyze-props.umd.js",
+  "module": "./dist/vite-plugin-analyze-props.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/vite-plugin-analyze-props.mjs",
+      "require": "./dist/vite-plugin-analyze-props.umd.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
