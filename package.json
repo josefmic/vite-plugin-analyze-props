@@ -1,25 +1,26 @@
 {
   "name": "vite-plugin-analyze-props",
   "private": false,
-  "version": "0.0.7",
+  "version": "0.2.2",
   "type": "module",
   "types": "./dist/main.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/vite-plugin-analyze-props.umd.cjs",
-  "module": "./dist/vite-plugin-analyze-props.js",
+  "main": "./dist/vite-plugin-analyze-props.cjs",
   "exports": {
     ".": {
       "import": "./dist/vite-plugin-analyze-props.js",
-      "require": "./dist/vite-plugin-analyze-props.umd.cjs"
+      "require": "./dist/vite-plugin-analyze-props.cjs",
+      "types": "./dist/main.d.ts"
     }
   },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "npx ts-node src/main.ts"
+    "start": "npx ts-node src/main.ts",
+    "test": "vitest"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.20.6",

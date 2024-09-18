@@ -1,9 +1,9 @@
-import { ParserOptions } from "@babel/parser";
-const { parse } = require('@babel/parser');
-import { NodePath } from "@babel/traverse";
-const traverse = require('@babel/traverse').default;
-const fs = require('fs');
-const path = require('path');
+import { ParserOptions, parse } from "@babel/parser";
+import _traverse, { NodePath } from "@babel/traverse";
+import fs from 'fs';
+import path from 'path';
+
+const traverse = typeof _traverse === "function" ? _traverse : (_traverse as any).default;
 
 // Define the type for the result of the analysis
 type PropAnalysisResult = [string, string[]][];

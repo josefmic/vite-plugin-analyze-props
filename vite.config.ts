@@ -1,10 +1,25 @@
+import { builtinModules } from 'module';
+
 export default {
     build: {
-        emptyOutDir: false,
-        lib: {
-            entry: './src/main',
-            name: 'Vite Plugin Analyze Props',
-            fileName: 'vite-plugin-analyze-props'
-        }
-    }
-}
+      minify: false,
+      emptyOutDir: false,
+      lib: {
+        entry: './src/main',
+        name: 'VitePluginAnalyzeProps',
+        formats: ['es', 'cjs'],
+      },
+      rollupOptions: {
+        external: [
+          ...builtinModules,
+          'fs', 
+          'path',
+          '@babel/parser',
+          '@babel/traverse'
+        ],
+        output: {
+          exports: 'named',
+        },
+    },
+  }
+}; '! '
