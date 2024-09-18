@@ -1,10 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    "module": "CommonJS",          // Use ES module syntax
+    "target": "ES2020",          // Compile to latest JS
+    "declaration": true,         // Generate .d.ts files
+    "outDir": "./dist",          // Output compiled files (JS + .d.ts) to the dist folder
+    "rootDir": "./src",          // Specify the root directory of your source files
+    "strict": true,              // Enable strict type-checking
+    "esModuleInterop": true,     // Ensure interoperability between ES Modules and CommonJS
+    "moduleResolution": "node",  // Resolve modules using Node's module resolution algorithm
+    "skipLibCheck": true,        // Skip type checks for .d.ts files in node_modules
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],    // Include all TypeScript files in the src directory
+  "exclude": ["node_modules", "dist"]  // Exclude node_modules and dist from being compiled
 }

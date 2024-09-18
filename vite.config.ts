@@ -1,8 +1,8 @@
-import { resolve } from 'path';
 export default {
     build: {
+        emptyOutDir: false,
         lib: {
-            entry: resolve(__dirname, 'src/main.ts'),
+            entry: './src/main',
             name: 'Vite Plugin Analyze Props',
             fileName: 'vite-plugin-analyze-props'
         }
