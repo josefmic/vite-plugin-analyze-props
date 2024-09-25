@@ -98,12 +98,3 @@ export function analyzePropsAsJSON(...paths: string[]): string {
     const result = analyzePropsCore(...paths);
     return JSON.stringify(result, null, 2);
 }
-
-/**
- * Analyzes the props and prints the result to the console.
- * @param {...string} paths - One or more file paths or directory paths to analyze.
- */
-export function analyzePropsAndPrint(...paths: string[]): void {
-    const result = analyzePropsCore(...paths);
-    console.log(result);
-}
