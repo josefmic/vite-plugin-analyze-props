@@ -2,6 +2,7 @@ import { ParserOptions, parse } from "@babel/parser";
 import _traverse, { NodePath } from "@babel/traverse";
 import fs from 'fs';
 import path from 'path';
+import fg from 'fast-glob';
 
 const traverse = typeof _traverse === "function" ? _traverse : (_traverse as any).default;
 
@@ -10,23 +11,12 @@ type PropAnalysisResult = [string, string[]][];
 
 /**
  * Analyzes the props used in the provided files or directories.
- * @param {...string} paths - One or more file paths or directory paths to analyze.
+ * Supports glob patterns for file matching.
+ * @param {...string} patterns - One or more file paths, directory paths, or glob patterns to analyze.
  * @returns {PropAnalysisResult} - An array of tuples where each tuple contains a prop name and an array of property names.
  */
-function analyzePropsCore(...paths: string[]): PropAnalysisResult {
+function analyzePropsCore(...patterns: string[]): PropAnalysisResult {
     const usedProps = new Map<string, string[]>();
-
-    const analyzeDirectory = (directoryPath: string) => {
-        const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
-        for (const entry of entries) {
-            const fullPath = path.join(directoryPath, entry.name);
-            if (entry.isDirectory()) {
-                analyzeDirectory(fullPath);
-            } else if (entry.isFile() && (fullPath.endsWith('.js') || fullPath.endsWith('.jsx') || fullPath.endsWith('.ts') || fullPath.endsWith('.tsx'))) {
-                analyzeFile(fullPath);
-            }
-        }
-    };
 
     const analyzeFile = (filePath: string) => {
         const code = fs.readFileSync(filePath, 'utf-8');
@@ -68,13 +58,12 @@ function analyzePropsCore(...paths: string[]): PropAnalysisResult {
         });
     };
 
-    for (const path of paths) {
-        const stats = fs.statSync(path);
-        if (stats.isDirectory()) {
-            analyzeDirectory(path);
-        } else if (stats.isFile()) {
-            analyzeFile(path);
-        }
+    // Use fast-glob to find all matching files based on the provided patterns
+    const matchedFiles = fg.sync(patterns, { onlyFiles: true, absolute: true });
+
+    // Analyze each matched file
+    for (const filePath of matchedFiles) {
+        analyzeFile(filePath);
     }
 
     return Array.from(usedProps.entries());
@@ -82,19 +71,19 @@ function analyzePropsCore(...paths: string[]): PropAnalysisResult {
 
 /**
  * Analyzes the props and returns the result as an array.
- * @param {...string} paths - One or more file paths or directory paths to analyze.
+ * @param {...string} patterns - One or more file paths, directory paths, or glob patterns to analyze.
  * @returns {PropAnalysisResult} - The analyzed props as an array.
  */
-export function analyzePropsAsArray(...paths: string[]): PropAnalysisResult {
-    return analyzePropsCore(...paths);
+export function analyzePropsAsArray(...patterns: string[]): PropAnalysisResult {
+    return analyzePropsCore(...patterns);
 }
 
 /**
  * Analyzes the props and returns the result as a JSON string.
- * @param {...string} paths - One or more file paths or directory paths to analyze.
+ * @param {...string} patterns - One or more file paths, directory paths, or glob patterns to analyze.
  * @returns {string} - The analyzed props as a JSON string.
  */
-export function analyzePropsAsJSON(...paths: string[]): string {
-    const result = analyzePropsCore(...paths);
+export function analyzePropsAsJSON(...patterns: string[]): string {
+    const result = analyzePropsCore(...patterns);
     return JSON.stringify(result, null, 2);
 }
