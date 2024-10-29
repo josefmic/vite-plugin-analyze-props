@@ -1,4 +1,5 @@
 import _traverse, { NodePath } from "@babel/traverse";
+import * as t from "@babel/types";
 import { addOrUpdateComponent } from "../helpers/componentHelper";
 import { loadFiles } from "../helpers/fileLoader";
 import { parseFile } from "../helpers/fileParser";
@@ -9,46 +10,71 @@ const traverse = typeof _traverse === "function" ? _traverse : (_traverse as any
 /**
  * Analyzes the props used in the provided files or directories.
  * Supports glob patterns for file matching.
- * @param {string} patterns - One or more file paths, directory paths, or glob patterns to analyze.
+ * @param {string[]} patterns - One or more file paths, directory paths, or glob patterns to analyze.
  * @returns {ProgramOutput} - An array of tuples where each tuple contains a prop name and an array of property names.
  */
-export function getUsedProps(patterns: string[]): ProgramOutput {
+export function getUsedProps(matchedFiles: string[]): ProgramOutput {
     const output: ProgramOutput = [];
-    const matchedFiles = loadFiles(patterns);
 
     for (const filePath of matchedFiles) {
         const ast = parseFile(filePath);
 
+        let currentComponentName: string | null = null;
+
         traverse(ast, {
-            MemberExpression(path: NodePath<any>) {
-                if (path.node.property && !path?.parentPath?.isMemberExpression()) {
-                    let currentPath = path;
-                    let nameParts: string[] = [];
+            FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
+                if (path.node.id && path.node.id.name) {
+                    currentComponentName = path.node.id.name;
+                }
+            },
+            FunctionExpression(path: NodePath<t.FunctionExpression>) {
+                const parent = path.findParent((p) => p.isVariableDeclarator());
+                if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                    currentComponentName = parent.node.id.name;
+                }
+            },
+            ArrowFunctionExpression(path: NodePath<t.ArrowFunctionExpression>) {
+                const parent = path.findParent((p) => p.isVariableDeclarator());
+                if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                    currentComponentName = parent.node.id.name;
+                }
+            },
+            ClassDeclaration(path: NodePath<t.ClassDeclaration>) {
+                if (path.node.id && path.node.id.name) {
+                    currentComponentName = path.node.id.name;
+                }
+            },
+
+            MemberExpression(path: NodePath<t.MemberExpression>) {
+                if (path.node.property && !path.parentPath.isMemberExpression() && currentComponentName) {
+                    let currentPath: NodePath = path;
+                    const nameParts: string[] = [];
 
                     while (currentPath.isMemberExpression()) {
-                        if (currentPath.node.property.type === 'Identifier') {
-                            nameParts.unshift(currentPath.node.property.name);
-                        } else if (currentPath.node.property.type === 'PrivateName') {
-                            nameParts.unshift(`PrivateName`);
+                        const property = currentPath.node.property;
+                        if (t.isIdentifier(property)) {
+                            nameParts.unshift(property.name);
+                        } else if (t.isPrivateName(property)) {
+                            nameParts.unshift("PrivateName");
                         }
-                        currentPath = currentPath.get('object');
+                        currentPath = currentPath.get("object") as NodePath;
                     }
 
                     if (currentPath.isIdentifier()) {
                         nameParts.unshift(currentPath.node.name);
-                        addOrUpdateComponent(output, filePath, currentPath.node.name, [nameParts]);
+                        addOrUpdateComponent(output, filePath, currentComponentName, [nameParts]);
                     }
                 }
             },
-            Identifier(path: NodePath<any>) {
-                if (path.isIdentifier() && path.parentPath.isJSXExpressionContainer()) {
+
+            Identifier(path: NodePath<t.Identifier>) {
+                if (path.parentPath.isJSXExpressionContainer() && currentComponentName) {
                     const propName = path.node.name;
-                    addOrUpdateComponent(output, filePath, propName, [[propName]]);
+                    addOrUpdateComponent(output, filePath, currentComponentName, [[propName]]);
                 }
             },
         });
     }
 
-    console.log('analyzeProps:', JSON.stringify(output, null, 2));
     return output;
 }

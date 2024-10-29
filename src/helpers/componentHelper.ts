@@ -12,7 +12,7 @@ export function addOrUpdateComponent(output: ProgramOutput, filePath: string, co
 
     if (existingFile) {
         const existingComponent = existingFile.components.find(x => x.name === componentName);
-
+                
         if (existingComponent) {
             if (!existingComponent.used.some(x => x.join('.') === nameParts[0].join('.'))) {
                 existingComponent.used.push(...nameParts);
