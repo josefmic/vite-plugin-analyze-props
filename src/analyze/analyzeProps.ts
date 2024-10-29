@@ -20,15 +20,15 @@ export function analyzeProps(options: AnalyzePropsOptions): PluginOption {
 
         handleHotUpdate({ file, server }: { file: string; server: ViteDevServer }) {
             if (matchedFiles.includes(file)) {
-                output = getUsedProps(matchedFiles);
-                server.ws.send({ type: 'full-reload' });
+                console.log("\x1b[36m[vite-plugin-analyze-props]\x1b[0m \x1b[32mFile changed, analyzing props\x1b[0m");
+                server.restart();
             }
         },
 
         config() {
             return {
                 define: {
-                    'ANALYZED_PROPS': JSON.stringify(output),
+                    'import.meta.env.ANALYZED_PROPS': output,
                 },
             };
         },

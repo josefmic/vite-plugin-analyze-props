@@ -9,13 +9,16 @@ Used dependencies: @babel/parser & @babel/traverse
 
 ```npm i vite-plugin-analyze-props```
 
-# Available methods:
+# Config:
 
-* analyzePropsAsArray()
-    * Analyzes the props and returns the result as an array.
-
-* analyzePropsAsJSON()
-    * Analyzes the props and returns the result as a JSON string.
+```
+analyzeProps({
+  babel?: {
+    plugins: string[];
+  },
+  patterns: string[];
+})
+```
 
 # Basic usage
 
@@ -28,18 +31,30 @@ export const Component = ({dataUsed, dataUnused}: {
   return (
     <div>
       <div>dataUsed: {dataUsed}</div>
+      <div>dataUsed: {dataUsed.prop}</div>
     </div>
   );
 };
 ```
 
+***vite.config.ts***
+```
+import { analyzeProps } from 'vite-plugin-analyze-props';
+
+export default defineConfig({
+  plugins: [
+    analyzeProps({
+      patterns: ['src/Component.tsx']
+    })
+  ],
+})
+```
+
 ***App.tsx***
 ```
-import { analyzePropsAsArray } from 'vite-plugin-analyze-props';
 
 export const App = () => {
-    const usedProps = 
-        analyzePropsAsArray('./src/components/Component.tsx');
+    const usedProps = import.meta.env.ANALYZED_PROPS;
 
     console.log(userProps);
 }
@@ -48,6 +63,13 @@ export const App = () => {
 ***Expected output:***
 ```
 [
-    ['dataUsed', ['dataUsed']],
+  fileName: "C:/.../src/Component.tsx,
+  components: [
+    name: "Component",
+    used: [
+      [dataUsed],
+      [dataUsed, prop]
+    ]
+  ]
 ]
 ```

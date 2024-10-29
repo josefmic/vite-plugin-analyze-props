@@ -1,7 +1,6 @@
 import _traverse, { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import { addOrUpdateComponent } from "../helpers/componentHelper";
-import { loadFiles } from "../helpers/fileLoader";
 import { parseFile } from "../helpers/fileParser";
 import { ProgramOutput } from "../types/types";
 

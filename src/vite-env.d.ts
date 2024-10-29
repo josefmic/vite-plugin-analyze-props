@@ -2,4 +2,6 @@
 
 import { ProgramOutput } from "./types/types";
 
-declare const ANALYZED_PROPS: ProgramOutput;
+interface ImportMetaEnv {
+    ANALYZED_PROPS: ProgramOutput;
+}

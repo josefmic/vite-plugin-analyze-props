@@ -9,11 +9,12 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client"]
   },
   "include": [
     "src/**/*.ts",
-    "vite-env.d.ts"
+    "src/**/*.d.ts",
   ],
   "exclude": ["node_modules", "dist"]
 }

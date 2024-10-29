@@ -1,9 +1,10 @@
 import { builtinModules } from 'module';
+import dts from 'vite-plugin-dts';
 
 export default {
     build: {
-      minify: false,
-      emptyOutDir: false,
+      minify: true,
+      emptyOutDir: true,
       lib: {
         entry: './src/main',
         name: 'VitePluginAnalyzeProps',
@@ -21,5 +22,11 @@ export default {
           exports: 'named',
         },
       },
-    }
-}; '! '
+    },
+    plugins: [
+      dts({
+        copyDtsFiles: true,
+        rollupTypes: true,
+      })
+    ]
+};

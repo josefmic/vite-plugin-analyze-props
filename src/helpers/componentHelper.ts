@@ -21,7 +21,6 @@ export function addOrUpdateComponent(output: ProgramOutput, filePath: string, co
             existingFile.components.push({
                 name: componentName,
                 used: nameParts,
-                unused: []
             });
         }
     } else {
@@ -30,7 +29,6 @@ export function addOrUpdateComponent(output: ProgramOutput, filePath: string, co
             components: [{
                 name: componentName,
                 used: nameParts,
-                unused: []
             }]
         });
     }

@@ -5,7 +5,7 @@ export type AnalyzedFile = {
     components: Array<{
         name: string,
         used: PropPath[],
-        unused: PropPath[],
+        unused?: PropPath[],
     }>    
 }
 
