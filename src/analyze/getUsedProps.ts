@@ -18,29 +18,68 @@ export function getUsedProps(matchedFiles: string[]): ProgramOutput {
     for (const filePath of matchedFiles) {
         const ast = parseFile(filePath);
 
+        const componentStack: string[] = [];
         let currentComponentName: string | null = null;
 
         traverse(ast, {
-            FunctionDeclaration(path: NodePath<t.FunctionDeclaration>) {
-                if (path.node.id && path.node.id.name) {
-                    currentComponentName = path.node.id.name;
+            FunctionDeclaration: {
+                enter(path: NodePath<t.FunctionDeclaration>) {
+                    if (path.node.id && path.node.id.name) {
+                        componentStack.push(path.node.id.name);
+                        currentComponentName = path.node.id.name;
+                    }
+                },
+                exit(path: NodePath<t.FunctionDeclaration>) {
+                    if (path.node.id && path.node.id.name) {
+                        componentStack.pop();
+                        currentComponentName = componentStack[componentStack.length - 1] || null;
+                    }
                 }
             },
-            FunctionExpression(path: NodePath<t.FunctionExpression>) {
-                const parent = path.findParent((p) => p.isVariableDeclarator());
-                if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
-                    currentComponentName = parent.node.id.name;
+            FunctionExpression: {
+                enter(path: NodePath<t.FunctionExpression>) {
+                    const parent = path.findParent((p) => p.isVariableDeclarator());
+                    if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                        componentStack.push(parent.node.id.name);
+                        currentComponentName = parent.node.id.name;
+                    }
+                },
+                exit(path: NodePath<t.FunctionExpression>) {
+                    const parent = path.findParent((p) => p.isVariableDeclarator());
+                    if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                        componentStack.pop();
+                        currentComponentName = componentStack[componentStack.length - 1] || null;
+                    }
                 }
             },
-            ArrowFunctionExpression(path: NodePath<t.ArrowFunctionExpression>) {
-                const parent = path.findParent((p) => p.isVariableDeclarator());
-                if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
-                    currentComponentName = parent.node.id.name;
+            ArrowFunctionExpression: {
+                enter(path: NodePath<t.ArrowFunctionExpression>) {
+                    const parent = path.findParent((p) => p.isVariableDeclarator());
+                    if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                        componentStack.push(parent.node.id.name);
+                        currentComponentName = parent.node.id.name;
+                    }
+                },
+                exit(path: NodePath<t.ArrowFunctionExpression>) {
+                    const parent = path.findParent((p) => p.isVariableDeclarator());
+                    if (parent && t.isVariableDeclarator(parent.node) && t.isIdentifier(parent.node.id)) {
+                        componentStack.pop();
+                        currentComponentName = componentStack[componentStack.length - 1] || null;
+                    }
                 }
             },
-            ClassDeclaration(path: NodePath<t.ClassDeclaration>) {
-                if (path.node.id && path.node.id.name) {
-                    currentComponentName = path.node.id.name;
+            ClassDeclaration: {
+                enter(path: NodePath<t.ClassDeclaration>) {
+                    if (path.node.id && path.node.id.name) {
+                        componentStack.push(path.node.id.name);
+                        currentComponentName = path.node.id.name;
+                    }
+                },
+                exit(path: NodePath<t.ClassDeclaration>) {
+                    if (path.node.id && path.node.id.name) {
+                        componentStack.pop();
+                        currentComponentName = componentStack[componentStack.length - 1] || null;
+                    }
                 }
             },
 
