@@ -85,6 +85,18 @@ export function getUsedProps(matchedFiles: string[]): ProgramOutput {
 
             MemberExpression(path: NodePath<t.MemberExpression>) {
                 if (path.node.property && !path.parentPath.isMemberExpression() && currentComponentName) {
+                    if (!currentComponentName) return;
+                
+                    const isInsideJSX = path.findParent((p) => p.isJSXExpressionContainer());
+                    const isPropAccess = path.findParent((p) => 
+                        p.isVariableDeclarator() || 
+                        p.isAssignmentExpression()
+                    );
+
+                    if (!(isInsideJSX || isPropAccess)) return;
+
+                    if (path.parent.type === 'CallExpression' && path.node === path.parent.callee) return;
+                    
                     let currentPath: NodePath = path;
                     const nameParts: string[] = [];
 
