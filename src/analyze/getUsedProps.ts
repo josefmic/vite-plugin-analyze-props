@@ -104,6 +104,8 @@ export function getUsedProps(matchedFiles: string[]): ProgramOutput {
                         const property = currentPath.node.property;
                         if (t.isIdentifier(property)) {
                             nameParts.unshift(property.name);
+                        } else if (t.isStringLiteral(property)) {
+                            nameParts.unshift(property.value)
                         } else if (t.isPrivateName(property)) {
                             nameParts.unshift("PrivateName");
                         }

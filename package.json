@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-analyze-props",
   "private": false,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "types": "./dist/main.d.ts",
   "files": [
@@ -23,12 +23,14 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.20.5",
     "@types/babel__traverse": "^7.20.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vite": "^5.4.9"
   },
   "dependencies": {
+    "@babel/core": "^7.26.0",
     "@babel/parser": "^7.24.8",
     "@babel/traverse": "^7.24.8",
     "fast-glob": "^3.3.2",

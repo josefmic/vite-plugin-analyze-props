@@ -17,6 +17,7 @@ analyzeProps({
     plugins: string[];
   },
   patterns: string[];
+  filePath: string;
 })
 ```
 
@@ -56,7 +57,7 @@ export default defineConfig({
 export const App = () => {
     const usedProps = import.meta.env.ANALYZED_PROPS;
 
-    console.log(userProps);
+    console.log(usedProps);
 }
 ```
 
