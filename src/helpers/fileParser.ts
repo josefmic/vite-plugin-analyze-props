@@ -1,8 +1,8 @@
+import { transform } from "@babel/core";
 import { parse } from '@babel/parser';
 import fs from 'fs';
-import { getBabelPlugins } from './config';
 import { loadUserBabelPlugins } from './userBabelPluginLoader';
-import { transform } from "@babel/core";
+import { getBabelPlugins } from "./config";
 
 /**
  * Transforms the given code using Babel and user-defined plugins.
@@ -11,8 +11,6 @@ import { transform } from "@babel/core";
  */
 export function transformCode(code: string): string {
     const plugins = loadUserBabelPlugins();
-
-    console.log(plugins);
 
     if (plugins.length === 0) {
         return code;
@@ -36,10 +34,11 @@ export function transformCode(code: string): string {
  */
 export function parseFile(filePath: string) {
     let code = fs.readFileSync(filePath, 'utf-8');
+    const plugins = getBabelPlugins();
 
-    //if (plugins?.length > 0) {
-    //    code = transformCode(code);
-    //}
+    if (plugins?.length > 0) {
+        code = transformCode(code);
+    }
 
     return parse(code ?? "", {
         sourceType: 'module',
