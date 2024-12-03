@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     build: {
-      minify: false,
+      minify: true,
       emptyOutDir: true,
       lib: {
         entry: './src/main',
