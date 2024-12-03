@@ -45,7 +45,7 @@ import { analyzeProps } from 'vite-plugin-analyze-props';
 export default defineConfig({
   plugins: [
     analyzeProps({
-      patterns: ['src/Component.tsx']
+      patterns: ['src/**/*.tsx']
     })
   ],
 })
@@ -55,7 +55,7 @@ export default defineConfig({
 ```
 
 export const App = () => {
-    const usedProps = import.meta.env.ANALYZED_PROPS;
+    const usedProps =  import.meta.env.VITE_ANALYZED_PROPS;
 
     console.log(usedProps);
 }

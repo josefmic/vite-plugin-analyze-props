@@ -3,6 +3,7 @@ import * as t from "@babel/types";
 import { addOrUpdateComponent } from "../helpers/componentHelper";
 import { parseFile } from "../helpers/fileParser";
 import { ProgramOutput } from "../types/types";
+import { EXCLUDED_COMPONENTS } from "../helpers/excludedComponents";
 
 const traverse = typeof _traverse === "function" ? _traverse : (_traverse as any).default;
 
@@ -116,7 +117,10 @@ export async function getUsedProps(matchedFiles: string[]): Promise<ProgramOutpu
 
                     if (currentPath.isIdentifier()) {
                         nameParts.unshift(currentPath.node.name);
-                        addOrUpdateComponent(output, filePath, componentName, [nameParts]);
+                        const fullName = nameParts.join(".");
+                        if (!EXCLUDED_COMPONENTS.has(fullName)) {
+                            addOrUpdateComponent(output, filePath, componentName, [nameParts]);
+                        }
                     }
                 }
             },

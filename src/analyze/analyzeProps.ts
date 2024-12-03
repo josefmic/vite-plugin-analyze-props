@@ -21,7 +21,7 @@ export function analyzeProps(options: AnalyzePropsOptions): PluginOption {
     return {
         name: 'vite-plugin-analyze-props',
 
-        async configResolved() {
+        async config(config) {
             await setBabelPlugins(options?.babel?.plugins || []);
 
             const matchedFiles = await loadFiles(options.patterns);
@@ -34,6 +34,23 @@ export function analyzeProps(options: AnalyzePropsOptions): PluginOption {
                 await fs.mkdir(dirPath, { recursive: true });
                 await fs.writeFile(resolvedPath, JSON.stringify(analyzedProps, null, 2), 'utf-8');
             }
+
+            config.define = {
+                ...(config.define || {}),
+                'import.meta.env.VITE_ANALYZED_PROPS': JSON.stringify(analyzedProps),
+            };
+        },
+
+        transformIndexHtml(html: string) {
+            const jsonString = JSON.stringify(analyzedProps);
+            const scriptTag = `
+                <script>
+                    if (typeof window !== 'undefined') {
+                        window.ANALYZED_PROPS = ${jsonString};
+                    }
+                </script>
+            `;
+            return html.replace('</body>', `${scriptTag}</body>`);
         },
 
         handleHotUpdate({ file, server }: { file: string; server: ViteDevServer }) {
