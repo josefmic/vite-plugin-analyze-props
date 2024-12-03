@@ -3,5 +3,5 @@
 import { ProgramOutput } from "./types/types";
 
 interface ImportMetaEnv {
-    ANALYZED_PROPS: ProgramOutput;
+    readonly ANALYZED_PROPS: ProgramOutput;
 }

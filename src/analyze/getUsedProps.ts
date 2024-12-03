@@ -12,11 +12,11 @@ const traverse = typeof _traverse === "function" ? _traverse : (_traverse as any
  * @param {string[]} patterns - One or more file paths, directory paths, or glob patterns to analyze.
  * @returns {ProgramOutput} - An array of tuples where each tuple contains a prop name and an array of property names.
  */
-export function getUsedProps(matchedFiles: string[]): ProgramOutput {
+export async function getUsedProps(matchedFiles: string[]): Promise<ProgramOutput> {
     const output: ProgramOutput = [];
 
     for (const filePath of matchedFiles) {
-        const ast = parseFile(filePath);
+        const ast = await parseFile(filePath);
 
         let componentName: null|string = null;
 

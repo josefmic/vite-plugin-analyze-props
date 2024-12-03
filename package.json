@@ -32,7 +32,10 @@
   "dependencies": {
     "@babel/core": "^7.26.0",
     "@babel/parser": "^7.24.8",
+    "@babel/preset-react": "^7.25.9",
+    "@babel/preset-typescript": "^7.26.0",
     "@babel/traverse": "^7.24.8",
+    "@vitejs/plugin-react": "^4.3.4",
     "babel-plugin-transform-react-pug": "^7.0.1",
     "fast-glob": "^3.3.2",
     "vite-plugin-dts": "^4.3.0"

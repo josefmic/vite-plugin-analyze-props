@@ -5,6 +5,6 @@ import fg from 'fast-glob';
  * @param {string} patterns - One or more file paths, directory paths, or glob patterns to load.
  * @returns {string[]} - An array of file paths matching the patterns.
  */
-export function loadFiles(patterns: string[]): string[] {
-    return fg.sync(patterns, { onlyFiles: true, absolute: true });
+export async function loadFiles(patterns: string[]): Promise<string[]> {
+    return fg.async(patterns, { onlyFiles: true, absolute: true });
 }
