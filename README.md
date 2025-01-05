@@ -5,72 +5,102 @@ Used to parse a file using @babel/parser followed by a traverse and analysis usi
 
 Used dependencies: @babel/parser & @babel/traverse
 
-# Installl
+## Install
 
-```npm i vite-plugin-analyze-props```
+`npm i vite-plugin-analyze-props`
 
-# Config:
+## Basic usage
 
+### vite.config.ts
+
+```tsx
+import { analyzeProps } from "vite-plugin-analyze-props";
+
+export default defineConfig({
+  plugins: [
+    analyzeProps({
+      patterns: ["src/**/*.tsx"],
+      fileOutput: "src/output.json"
+    }),
+  ],
+});
 ```
-analyzeProps({
-  babel?: {
-    plugins: string[];
-  },
-  patterns: string[];
-  filePath: string;
-})
+
+### Get the analysis output
+
+```tsx
+import * as fs from "node:fs"
+
+// Get the output from env variable
+const usedProps = import.meta.env.VITE_ANALYZED_PROPS;
+
+// Get the output from file (when `fileOutput` option is specified)
+const usedPropsFromFile = JSON.parse(fs.readFileSync("./src/output.json"));
 ```
 
-# Basic usage
+### Example input/output
 
-***Component.tsx***
-```
-export const Component = ({dataUsed, dataUnused}: {
-  dataUsed: number;
-  dataUnused: number;
+**Input:**
+
+```tsx
+export const Component = ({
+  data,
+}: {
+  data: {
+    used1: number;
+    used2: number;
+    unused: number; 
+  }
 }) => {
   return (
     <div>
-      <div>dataUsed: {dataUsed}</div>
-      <div>dataUsed: {dataUsed.prop}</div>
+      <div>used1: {data.used1}</div>
+      <div>used2: {data.used2}</div>
     </div>
   );
 };
 ```
 
-***vite.config.ts***
-```
-import { analyzeProps } from 'vite-plugin-analyze-props';
+**Expected output:**
 
-export default defineConfig({
-  plugins: [
-    analyzeProps({
-      patterns: ['src/**/*.tsx']
-    })
-  ],
-})
-```
-
-***App.tsx***
-```
-
-export const App = () => {
-    const usedProps =  import.meta.env.VITE_ANALYZED_PROPS;
-
-    console.log(usedProps);
-}
-```
-
-***Expected output:***
-```
+```ts
 [
-  fileName: "C:/.../src/Component.tsx,
-  components: [
-    name: "Component",
-    used: [
-      [dataUsed],
-      [dataUsed, prop]
+  {
+    fileName: "C:/.../src/Component.tsx",
+    components: [
+      {
+        name: "Component",
+        used: [
+          ["data", "used1"],
+          ["data", "used2"]
+        ]
+      }
     ]
-  ]
+  }
 ]
+```
+
+## `analyzeProps` config
+
+```ts
+interface AnalyzePropsOptions {
+  /**
+   * Glob pattern of files to analyze
+   * @example ["./src/pages/*.tsx", "./src/components/**/*.tsx"]
+   */
+  patterns: string[];
+
+  /**
+   * Where to output the analysis result
+   * @example "./output.json"
+   */
+  filePath?: string;
+
+  babel?: {
+    /**
+     * Optional list of babel plugins to be run before running the analysis
+     */
+    plugins?: string[];
+  };
+}
 ```
